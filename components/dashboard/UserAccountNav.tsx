@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/UserAvatar"
 import { User } from "@/app/(dashboard)/layout"
+import { clearCookies } from "@/lib/jwt"
+import { useRouter } from "next/navigation"
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, "name" | "image" | "email">
@@ -19,6 +21,13 @@ interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
 
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
+  const router = useRouter()
+  const handleSignOut = async () => { 
+    console.log('sign out')
+    clearCookies()
+    router.push('/login')
+
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -53,6 +62,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           className="cursor-pointer"
           onSelect={(event:any) => {
             event.preventDefault()
+            handleSignOut()
           }}
         >
           Sign out

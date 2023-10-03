@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
 import { cn } from "@/lib/utils"
 import { registerSchema } from "@/lib/validations/auth"
 import { buttonVariants } from "@/components/ui/button"

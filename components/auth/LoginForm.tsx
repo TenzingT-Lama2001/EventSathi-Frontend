@@ -1,11 +1,9 @@
 "use client"
 import * as React from "react"
-import { useSearchParams } from "next/navigation"
+import { redirect, useSearchParams, useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
-
 import { loginSchema } from "@/lib/validations/auth"
 import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,8 +30,9 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   })
   const searchParams = useSearchParams()
   const { toast } = useToast()
+  const router = useRouter()
   
-  const { mutate: loginMutation, isLoading} = useMutation({
+  const { mutate: loginMutation, isLoading, data: loginData} = useMutation({
     mutationFn: (data: LoginDto) => { 
       return login(data)
     },
@@ -42,8 +41,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         title: "Login successful",
         description: "You are now logged in.",
       })
+      router.push('/dashboard')
+
     },
     onError: (error) => { 
+      console.error('Login error:', error);
       toast({
         title: "Something went wrong.",
         description: "Your sign in request failed. Please try again.",
@@ -52,13 +54,16 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     }
   })
 
-  const { data, isFetching: isGoogleLoading, isError: isGoogleError, refetch} = useQuery({
+
+
+  const { data, isFetching: isGoogleLoading, isError: isGoogleError, refetch, isFetched} = useQuery({
     queryKey: ['googleLogin'],
     queryFn: async () => {
       const result = await loginWithGoogle()
       console.log("🚀 ~ file: LoginForm.tsx:59 ~ queryFn: ~ result:", result)
     },
-    enabled: false
+    enabled: false,
+    
   })
 
   const googleLogin = () => {
@@ -67,7 +72,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   async function onSubmit(data: LoginDto) {
     loginMutation(data)
-    reset()
+    // reset()
   }
 
   return (

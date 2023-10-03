@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { getAccessTokenFromCookie } from './token';
-import { cookies } from 'next/headers';
+import { getAccessTokenFromCookie } from './jwt';
 
-const axiosInstance = axios.create({ baseURL: 'http://localhost:4200' });
+const axiosInstance = axios.create({ baseURL: 'http://localhost:4200', withCredentials: true });
 
 axiosInstance.interceptors.response.use(
   (response) => response,

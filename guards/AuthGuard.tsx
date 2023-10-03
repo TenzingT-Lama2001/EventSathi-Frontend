@@ -1,10 +1,8 @@
-"use client"
 import { getCurrentUser } from "@/api/auth"
-import { getAccessTokenFromCookie } from "@/lib/token"
+import { getAccessTokenFromCookie } from "@/lib/jwt"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import React from "react"
-
 
 interface AuthGuardProps { 
     children?: React.ReactNode

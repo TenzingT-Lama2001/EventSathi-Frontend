@@ -1,16 +1,10 @@
 "use client"
-import Link from "next/link"
-import { siteConfig } from "@/config/site"
-import { Button, buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserAccountNav } from "@/components/dashboard/UserAccountNav"
 import { Calendar } from "@/components/ui/calendar"
 import React from "react"
-import { useQuery } from "@tanstack/react-query"
-import { getCurrentUser } from "@/api/auth"
-import { notFound } from "next/navigation"
 import AuthGuard from "@/guards/AuthGuard"
 
 interface DashboardLayoutProps {
@@ -68,6 +62,6 @@ const [date, setDate] = React.useState<Date | undefined>(new Date())
                 </main>
             </div>
       </div>
-  </AuthGuard>
+    </AuthGuard>
   )
 }
