@@ -1,50 +1,45 @@
-"use client"
-
-import Link from "next/link"
-
-
+'use client';
+import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { UserAvatar } from "@/components/UserAvatar"
-import { User } from "@/app/(dashboard)/layout"
-import { clearCookies } from "@/lib/jwt"
-import { useRouter } from "next/navigation"
+} from '@/components/ui/dropdown-menu';
+import { UserAvatar } from '@/components/UserAvatar';
+import { clearCookies } from '@/lib/jwt';
+import { useRouter } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
+import useAuth from '@/hooks/useAuth';
+import { AuthUser } from '@/context/AuthContext';
+import { logout } from '@/api/auth';
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, "name" | "image" | "email">
+  user: AuthUser;
 }
 
-
 export function UserAccountNav({ user }: UserAccountNavProps) {
-  const router = useRouter()
-  const handleSignOut = async () => { 
-    console.log('sign out')
-    clearCookies()
-    router.push('/login')
-
-  }
+  const { toast } = useToast();
+  const router = useRouter();
+  const handleSignOut = async () => {
+    await logout();
+    router.push('/login');
+    toast({
+      title: 'Logout successful',
+      description: 'You are now logout .',
+    });
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <UserAvatar
-          user={{ image: user.image}}
-          className="h-8 w-8"
-        />
+        <UserAvatar user={{ avatar: user?.avatar }} className="h-8 w-8" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
-            {user.name && <p className="font-medium">{user.name}</p>}
-            {user.email && (
-              <p className="w-[200px] truncate text-sm text-muted-foreground">
-                {user.email}
-              </p>
-            )}
+            {user?.first_name && <p className="font-medium">{user?.first_name}</p>}
+            {user?.email && <p className="w-[200px] truncate text-sm text-muted-foreground">{user.email}</p>}
           </div>
         </div>
         <DropdownMenuSeparator />
@@ -60,14 +55,14 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
-          onSelect={(event:any) => {
-            event.preventDefault()
-            handleSignOut()
+          onSelect={(event: any) => {
+            event.preventDefault();
+            handleSignOut();
           }}
         >
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -1,21 +1,23 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { useSearchParams } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { cn } from "@/lib/utils"
-import { registerSchema } from "@/lib/validations/auth"
-import { buttonVariants } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/components/ui/use-toast"
-import { Icons } from "@/components/icons"
+import * as React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { cn } from '@/lib/utils';
+import { registerSchema } from '@/lib/validations/auth';
+import { buttonVariants } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast, useToast } from '@/components/ui/use-toast';
+import { Icons } from '@/components/icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import useAuth from '@/hooks/useAuth';
 
 interface RegisterFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-type FormData = z.infer<typeof registerSchema>
+type FormData = z.infer<typeof registerSchema>;
 
 export function RegisterForm({ className, ...props }: RegisterFormProps) {
   const {
@@ -24,39 +26,47 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(registerSchema),
-  })
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [isGitHubLoading, setIsGitHubLoading] = React.useState<boolean>(false)
-  const searchParams = useSearchParams()
+  });
 
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
+  const { toast } = useToast();
+  const { signUp } = useAuth();
+  const router = useRouter();
+
+  const {
+    mutate: signUpMutation,
+    isLoading,
+    data: signupdata,
+  } = useMutation({
+    mutationFn: (data: FormData) => {
+      return signUp(data);
+    },
+    onSuccess: () => {
+      router.push('/login');
+      toast({
+        title: 'Registration successful',
+        description: 'Check your mail to confirm activate your account.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Something went wrong.',
+        description: 'Your sign up request failed. Please try again.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const googleLogin = () => {
+    window.open('http://localhost:4200/api/auth/google/login', '_self');
+  };
   async function onSubmit(data: FormData) {
-    console.log("🚀 ~ file: LoginForm.tsx:34 ~ onSubmit ~ data:", data)
-    // setIsLoading(true)
-    
-    // const signInResult = await signIn("email", {
-    //   email: data.email.toLowerCase(),
-    //   redirect: false,
-    //   callbackUrl: searchParams?.get("from") || "/dashboard",
-    // })
-
-    // setIsLoading(false)
-
-    // if (!signInResult?.ok) {
-    //   return toast({
-    //     title: "Something went wrong.",
-    //     description: "Your sign in request failed. Please try again.",
-    //     variant: "destructive",
-    //   })
-    // }
-
-    return toast({
-      title: "Check your email",
-      description: "We sent you a login link. Be sure to check your spam too.",
-    })
+    console.log('🚀 ~ file: RegisterForm.tsx:61 ~ onSubmit ~ data:', data);
+    signUpMutation(data);
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-2">
@@ -70,8 +80,8 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading || isGitHubLoading}
-              {...register("email")}
+              disabled={isLoading || isGoogleLoading}
+              {...register('email')}
             />
             <Label className="sr-only" htmlFor="password">
               Password
@@ -83,20 +93,14 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
               autoCapitalize="none"
               autoComplete="password"
               autoCorrect="off"
-              disabled={isLoading || isGitHubLoading}
-              {...register("password")}
+              disabled={isLoading || isGoogleLoading}
+              {...register('password')}
             />
-            {errors?.email && (
-              <p className="px-1 text-xs text-red-600">
-                {errors.email.message}
-              </p>
-            )}
+            {errors?.email && <p className="px-1 text-xs text-red-600">{errors.email.message}</p>}
           </div>
           <button className={cn(buttonVariants())} disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign In 
+            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            Sign In
           </button>
         </div>
       </form>
@@ -105,26 +109,25 @@ export function RegisterForm({ className, ...props }: RegisterFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
       <button
         type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
+        className={cn(buttonVariants({ variant: 'outline' }))}
         onClick={() => {
-          setIsGitHubLoading(true)
+          setIsGoogleLoading(true);
+          googleLogin();
         }}
-        disabled={isLoading || isGitHubLoading}
+        disabled={isLoading || isGoogleLoading}
       >
-        {isGitHubLoading ? (
+        {isGoogleLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Icons.google className="mr-2 h-4 w-4" />
-        )}{" "}
+        )}{' '}
         Google
       </button>
     </div>
-  )
+  );
 }

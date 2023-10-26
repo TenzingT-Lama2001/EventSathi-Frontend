@@ -7,9 +7,8 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) =>
     Promise.reject(
-      (error.response && error.response.data && error.response.data.message && error) ||
-      'Something went wrong'
-    )
+      (error.response && error.response.data && error.response.data.message && error) || 'Something went wrong',
+    ),
 );
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = getAccessTokenFromCookie(); // Retrieve the access token
