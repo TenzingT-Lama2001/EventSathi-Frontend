@@ -1,21 +1,16 @@
-import { LoginDto } from "@/components/auth/LoginForm";
-import axios from "@/lib/axios"
+import axios from '@/lib/axios';
 
+export const logout = async () => {
+  const result = await axios.get('/api/auth/logout');
+  return result;
+};
 
-export const login = async (payload: LoginDto) => { 
-    const result = await axios.post("/api/auth/login", payload);
-    console.log("🚀 ~ file: auth.ts:9 ~ login ~ result:", result)
-    return result
-}
-
-export const loginWithGoogle = async () => {
-    const result = await axios.get("/api/auth/google/login")
-    console.log("🚀 ~ file: auth.ts:13 ~ loginWithGoogle ~ result:", result)
-    return result
-}
-
+export const googleLoginSuccess = async () => {
+  const result = await axios.get('/api/auth/google/success');
+  console.log('🚀 ~ file: auth.ts:24 ~ loginWithGoogle ~ result:', result);
+  return result;
+};
 export const getCurrentUser = async () => {
-    const result = await axios.get("/api/users/current-user")
-    console.log("🚀 ~ file: auth.ts:18 ~ getCurrentUser ~ result", result)
-    return result.data
-}
+  const result = await axios.get('/api/users/current-user');
+  return result.data;
+};
