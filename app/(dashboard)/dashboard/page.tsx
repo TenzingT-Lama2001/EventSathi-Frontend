@@ -1,42 +1,21 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-
-
-
-export const metadata = {
-  title: "Dashboard",
-  description: "Dashboard to get started.",
-}
-const times = [1,2,3]
+'use client';
+import useAuth from '@/hooks/useAuth';
+import { checkRoles } from '@/lib/checkRoles';
+import OrganizerDashboard from '@/components/dashboard/OrganizerDashboard';
+import UserDashboard from '@/components/dashboard/UserDashboard';
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const role = checkRoles(user?.user_roles);
   return (
-    <main className="flex flex-col gap-3 lg:mt-6">
-      {times.map((t, index) =>{
-        return (
-
-        <Card key ={index}>
-        <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Card Content</p>
-        </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter>
-            </Card>
-         
-        )
-      })}
-
-    </main>
+    <>
+      {role?.includes('ADMIN') ? (
+        <div>Admin Dashboard</div>
+      ) : role?.includes('ORGANIZER') ? (
+        <OrganizerDashboard />
+      ) : (
+        <UserDashboard />
+      )}
+    </>
   );
 }

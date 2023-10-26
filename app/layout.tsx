@@ -1,13 +1,15 @@
-import "./globals.css"
-import { Metadata } from "next"
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
-import { TailwindIndicator } from "@/components/tailwind-indicator"
-import { ThemeProvider } from "@/components/provider/ThemeProvider"
-import { Toaster } from "@/components/ui/toaster"
-import { fontSans } from "@/lib/fonts"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import TanstackProvider from "@/components/provider/TanstackProvider"
+import './globals.css';
+import { Metadata } from 'next';
+import { siteConfig } from '@/config/site';
+import { cn } from '@/lib/utils';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { ThemeProvider } from '@/components/provider/ThemeProvider';
+import { Toaster } from '@/components/ui/toaster';
+import { fontMono } from '@/lib/fonts';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import TanstackProvider from '@/components/provider/TanstackProvider';
+import { cookies, headers } from 'next/headers';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: {
@@ -16,19 +18,18 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
   },
-}
-const queryClient = new QueryClient()
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
@@ -36,25 +37,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable,
-            
-          )}
-        >
+        <body className={cn('min-h-screen bg-background font-sans antialiased', fontMono.variable)}>
           <TanstackProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <div className="relative flex min-h-screen flex-col">
-                <div className="flex-1">{children}</div>
-              </div>
-              <Toaster />
-              <TailwindIndicator />
-            </ThemeProvider>
-             </TanstackProvider>
-     
+            <AuthProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                <div className="relative flex min-h-screen flex-col">
+                  <div className="flex-1">{children}</div>
+                </div>
+                <Toaster />
+                <TailwindIndicator />
+              </ThemeProvider>
+            </AuthProvider>
+          </TanstackProvider>
         </body>
       </html>
     </>
-  )
+  );
 }

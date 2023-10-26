@@ -1,25 +1,30 @@
-import { isValidToken } from '@/lib/jwt'
-import jwtDecode from 'jwt-decode'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+'use client';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { getAccessTokenFromCookie, isValidToken } from '@/lib/jwt';
+import { redirect, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface AuthLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
-console.log('rendered auth layout')
+console.log('CLIENT: rendered auth layout');
 export default function AuthLayout({ children }: AuthLayoutProps) {
-  const cookieStore = cookies()
-  const jwt = cookieStore.get('jwt');
-  console.log("🚀 ~ file: layout.tsx:12 ~ AuthLayout ~ jwt2:", jwt)
-  const isValid = isValidToken(jwt?.value)
-  console.log("🚀 ~ file: layout.tsx:14 ~ AuthLayout ~ isValid2:", isValid)
+  const [isLoading, setLoading] = useState(true);
+  const router = useRouter();
 
-  if (isValid) {
-    redirect('/dashboard')
+  useEffect(() => {
+    const accessToken = getAccessTokenFromCookie();
+
+    if (accessToken) {
+      router.push('/dashboard');
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-  return (
-      <div className="min-h-screen">
-          {children}
-      </div>
-  )
+
+  return <>{children}</>;
 }

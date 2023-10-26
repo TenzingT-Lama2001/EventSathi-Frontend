@@ -1,67 +1,62 @@
-"use client"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { UserAccountNav } from "@/components/dashboard/UserAccountNav"
-import { Calendar } from "@/components/ui/calendar"
-import React from "react"
-import AuthGuard from "@/guards/AuthGuard"
+'use client';
+import { MainNav } from '@/components/main-nav';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { UserAccountNav } from '@/components/dashboard/UserAccountNav';
+import React, { Suspense, useEffect } from 'react';
+import AuthGuard from '@/guards/AuthGuard';
+import { getAccessTokenFromCookie, setSession } from '@/lib/jwt';
+import { useToast, toast } from '@/components/ui/use-toast';
+import useAuth from '@/hooks/useAuth';
 
 interface DashboardLayoutProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
-const user: User = {
-    name: "Tenzing",
-    // image: "" ,
-    email: "tenz@gmail.com"
-}
-
-export interface User  {
-    name?: string | null
-    email?: string | null
-    image?: string | null
-}
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { toast } = useToast();
+  const { user } = useAuth();
 
-const [date, setDate] = React.useState<Date | undefined>(new Date())
+  React.useEffect(() => {
+    // Check if the authentication was successful using the query parameter
+    const queryParams = new URLSearchParams(window.location.search);
+    const authSuccess = queryParams.get('authSuccess');
+    const accessToken = getAccessTokenFromCookie() as string;
+    let timeout: NodeJS.Timeout;
+    if (authSuccess === 'true') {
+      timeout = setTimeout(() => {
+        setSession(accessToken);
+        toast({
+          title: 'Login successful',
+          description: 'You are now logged in.',
+        });
+      }, 0);
+    } else if (authSuccess === 'false') {
+    }
+    return () => clearTimeout(timeout);
+  }, [toast]);
+
   return (
-  <AuthGuard>
-    <div className="flex flex-col min-h-screen space-y-6"> 
-    <header className="bg-background sticky top-0 z-40 border-b">
-      <div className="container flex h-16 items-center justify-between py-4">
-        <MainNav />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
-            <ThemeToggle />
-            <UserAccountNav
-                    user={{
-                        name: user.name || null,
-                        image: user.image  || null,
-                        email: user.email  || null,
-                    }}
-            />  
-          </nav>
-        </div>
-      </div>
-            </header>
-            <div className="container grid flex-1 gap-12 lg:grid-cols-[280px_1fr]">
-                <aside className="hidden w-[300px] flex-col lg:flex items-center">
-                        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 my-6">
-                            Welcome, {user.name}
-                        </h2>
-                        <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={setDate}
-                                className="rounded-md border"
-                            /> 
-                </aside>
-                <main className="flex w-full flex-1 flex-col overflow-hidden">
-                    {children}
-                </main>
+    <AuthGuard>
+      <div className="flex min-h-screen flex-col space-y-6">
+        <header className="sticky top-0 z-40 border-b bg-background">
+          <div className="container flex h-16 items-center justify-between py-4">
+            <MainNav />
+            <div className="flex flex-1 items-center justify-end space-x-4">
+              <nav className="flex items-center space-x-1">
+                <ThemeToggle />
+                <UserAccountNav
+                  user={{
+                    first_name: user?.first_name || null,
+                    avatar: user?.avatar || null,
+                    email: user?.email || null,
+                  }}
+                />
+              </nav>
             </div>
+          </div>
+        </header>
+        {children}
       </div>
     </AuthGuard>
-  )
+  );
 }
