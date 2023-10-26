@@ -1,27 +1,27 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EventDetailsData, TabsDemoProps } from './event/EventDetails';
 import { FormEvent, useState } from 'react';
+import { useBoundStore } from '@/zustand/store';
 
-export function TabsDemo({ updateFields, location, event_link, max_attendees }: TabsDemoProps) {
+export function EventTypeTab() {
+  const { event, setEvent } = useBoundStore((state) => state);
   const [selectedTab, setSelectedTab] = useState<'ONLINE' | 'IN-PERSON'>('IN-PERSON');
 
   const handleMaxAttendee = (e: FormEvent) => {
     const max_attendees = parseInt((e.target as HTMLInputElement).value);
-    updateFields({ max_attendees });
+    setEvent({ max_attendees });
   };
 
   const handleLocation = (e: FormEvent) => {
     const location = (e.target as HTMLInputElement).value;
-    updateFields({ location });
+    setEvent({ location });
   };
 
   const handleMeetLink = (e: FormEvent) => {
     const event_link = (e.target as HTMLInputElement).value;
-    updateFields({ event_link });
+    setEvent({ event_link });
   };
 
   return (
@@ -32,7 +32,7 @@ export function TabsDemo({ updateFields, location, event_link, max_attendees }: 
             value="IN-PERSON"
             onClick={() => {
               setSelectedTab('IN-PERSON');
-              updateFields({ event_location_type: 'IN_PERSON', event_link: '' });
+              setEvent({ event_location_type: 'IN_PERSON', event_link: '' });
             }}
           >
             In-Person
@@ -41,7 +41,7 @@ export function TabsDemo({ updateFields, location, event_link, max_attendees }: 
             value="ONLINE"
             onClick={() => {
               setSelectedTab('ONLINE');
-              updateFields({ event_location_type: 'ONLINE', location: '' });
+              setEvent({ event_location_type: 'ONLINE', location: '' });
             }}
           >
             Online
@@ -57,13 +57,13 @@ export function TabsDemo({ updateFields, location, event_link, max_attendees }: 
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="location">Location</Label>
-                  <Input id="location" value={location} onChange={(e) => handleLocation(e)} />
+                  <Input id="location" value={event.location} onChange={(e) => handleLocation(e)} />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="max_attendees">Maximum Attendees</Label>
                   <Input
                     id="max_attendees"
-                    value={max_attendees}
+                    value={event.max_attendees}
                     type="number"
                     onChange={(e) => handleMaxAttendee(e)}
                   />
@@ -79,13 +79,13 @@ export function TabsDemo({ updateFields, location, event_link, max_attendees }: 
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="current">Meet Link</Label>
-                  <Input id="current" type="online" value={event_link} onChange={(e) => handleMeetLink(e)} />
+                  <Input id="current" type="online" value={event.event_link} onChange={(e) => handleMeetLink(e)} />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="max_attendees">Maximum Attendees</Label>
                   <Input
                     id="max_attendees"
-                    value={max_attendees}
+                    value={event.max_attendees}
                     type="number"
                     onChange={(e) => handleMaxAttendee(e)}
                   />

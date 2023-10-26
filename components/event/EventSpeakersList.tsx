@@ -1,20 +1,13 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useBoundStore } from '@/zustand/store';
 import Image from 'next/image';
 
-type Speaker = {
-  name: string;
-  bio: string;
-  photo: string;
-};
-
-type SpeakersProps = {
-  speakers: Speaker[];
-};
-export function EventSpeakersList({ speakers }: SpeakersProps) {
-  console.log('List', { speakers });
+export function EventSpeakersList() {
+  const { event } = useBoundStore((state) => state);
+  console.log('List', event.speakers);
   return (
     <div className="my-4 grid grid-cols-gallery gap-4 px-2">
-      {speakers.map((speaker, index) => (
+      {event.speakers.map((speaker, index) => (
         <Card key="index">
           <CardHeader>
             <div className=" relative flex h-64 rounded-xl bg-gray-200">

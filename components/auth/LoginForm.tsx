@@ -1,7 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import { redirect, useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -9,13 +8,10 @@ import { loginSchema } from '@/lib/validations/auth';
 import { buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast, useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from '@/lib/axios';
+import { useMutation } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
-import { getAccessTokenFromCookie, setSession } from '@/lib/jwt';
-import axiosInstance from '@/lib/axios';
 import useAuth from '@/hooks/useAuth';
 
 type LoginFormProps = React.HTMLAttributes<HTMLDivElement>;
@@ -31,38 +27,10 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   } = useForm<LoginDto>({
     resolver: zodResolver(loginSchema),
   });
-  const searchParams = useSearchParams();
   const { toast } = useToast();
   const router = useRouter();
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
-  const accessToken = getAccessTokenFromCookie() as string;
   const { login } = useAuth();
-  // const {
-  //   mutate: loginMutation,
-  //   isLoading,
-  //   data: loginData,
-  // } = useMutation({
-  //   mutationFn: (data: LoginDto) => login(data),
-  //   onSuccess: (data) => {
-  //     // console.log('🚀 ~ file: LoginForm.tsx:41 ~ LoginForm ~ data:', data);
-  //     const accessToken = getAccessTokenFromCookie() as string;
-  //     // console.log('🚀 ~ file: LoginForm.tsx:42 ~ LoginForm ~ accessToken:', accessToken);
-  //     setSession(accessToken);
-
-  //     toast({
-  //       title: 'Login successful',
-  //       description: 'You are now logged in.',
-  //     });
-  //     router.push('/dashboard');
-  //   },
-  //   onError: (error) => {
-  //     toast({
-  //       title: 'Something went wrong.',
-  //       description: 'Your sign in request failed. Please try again.',
-  //       variant: 'destructive',
-  //     });
-  //   },
-  // });
 
   const {
     mutate: loginMutation,
@@ -92,7 +60,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   async function onSubmit(data: LoginDto) {
     loginMutation(data);
-    // reset()
   }
 
   return (

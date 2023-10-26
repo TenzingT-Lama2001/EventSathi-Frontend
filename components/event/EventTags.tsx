@@ -1,14 +1,8 @@
+import { useBoundStore } from '@/zustand/store';
 import { useState } from 'react';
 
-type EventTagsData = {
-  tags: string[];
-};
-
-type EventTagsProps = EventTagsData & {
-  updateFields: (fields: Partial<EventTagsData>) => void;
-};
-
-export function EventTags({ tags, updateFields }: EventTagsProps) {
+export function EventTags() {
+  const { event, setEvent } = useBoundStore((state) => state);
   const [inputValue, setInputValue] = useState('');
   const [suggestedTags, setSuggestedTags] = useState(['Ecommerce', 'IT', 'Business']);
 
@@ -27,9 +21,9 @@ export function EventTags({ tags, updateFields }: EventTagsProps) {
   };
   const handleTagClick = (tag: string) => {
     // Add the clicked tag to the list of selected tags
-    if (!tags.includes(tag)) {
-      const updatedTags = [...tags, tag];
-      updateFields({ tags: updatedTags });
+    if (!event.tags.includes(tag)) {
+      const updatedTags = [...event.tags, tag];
+      setEvent({ tags: updatedTags });
       setInputValue('');
       setSuggestedTags(['Ecommerce', 'IT', 'Business']);
     }
@@ -37,8 +31,8 @@ export function EventTags({ tags, updateFields }: EventTagsProps) {
 
   const handleTagRemove = (tag: string) => {
     // Remove the selected tag
-    const updatedTags = tags.filter((t) => t !== tag);
-    updateFields({ tags: updatedTags });
+    const updatedTags = event.tags.filter((t) => t !== tag);
+    setEvent({ tags: updatedTags });
   };
 
   return (
@@ -47,7 +41,7 @@ export function EventTags({ tags, updateFields }: EventTagsProps) {
 
       <div className="mt-4">
         <div>
-          {tags.map((tag) => (
+          {event.tags.map((tag) => (
             <span key={tag} className="tag m-1 inline-flex items-center rounded-lg bg-blue-200 px-2 py-1 text-blue-600">
               {tag}
               <button onClick={() => handleTagRemove(tag)} className="ml-1 text-red-600">

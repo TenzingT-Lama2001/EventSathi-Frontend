@@ -1,15 +1,17 @@
 'use client';
+
 import { Calendar } from '@/components/ui/calendar';
 import useAuth from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
 const times = [1, 2, 3, 4, 5, 6];
+
 export default function OrganizerDashboard({ children }: DashboardLayoutProps) {
   const { isAuthenticated, isInitialized, user } = useAuth();
   const router = useRouter();

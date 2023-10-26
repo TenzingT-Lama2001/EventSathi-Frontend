@@ -10,65 +10,69 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { cn } from '@/lib/utils';
+import { Event } from '@/zustand/slices/eventSlice';
+import { useBoundStore } from '@/zustand/store';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { FormEvent, useState } from 'react';
 
-export type EventData = {
-  title: string;
-  description: string;
-  tags: string[];
-  event_image: string;
-  speakers: {
-    name: string;
-    bio: string;
-    photo: string;
-  }[];
-  start_date: Date;
-  end_date: Date;
-  event_location_type: 'ONLINE' | 'IN_PERSON';
-  location?: string;
-  event_link?: string;
-  max_attendees?: number;
-  registration_deadline?: Date;
-};
+// export type EventData = {
+//   title: string;
+//   description: string;
+//   tags: string[];
+//   event_image: string;
+//   speakers: {
+//     name: string;
+//     bio: string;
+//     photo: string;
+//   }[];
+//   start_date: Date;
+//   end_date: Date;
+//   event_location_type: 'ONLINE' | 'IN_PERSON';
+//   location?: string;
+//   event_link?: string;
+//   max_attendees?: number;
+//   registration_deadline?: Date;
+// };
 
-const INITIAL_DATA: EventData = {
-  title: '',
-  description: '',
-  tags: [],
-  speakers: [],
-  start_date: new Date(),
-  end_date: new Date(),
-  event_location_type: 'IN_PERSON',
-  event_image: 'https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?w=300&dpr=2&q=80',
-  location: '',
-  event_link: '',
-  max_attendees: 15,
-  registration_deadline: new Date(),
-};
+// const INITIAL_DATA: EventData = {
+//   title: '',
+//   description: '',
+//   tags: [],
+//   speakers: [],
+//   start_date: new Date(),
+//   end_date: new Date(),
+//   event_location_type: 'IN_PERSON',
+//   event_image: 'https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?w=300&dpr=2&q=80',
+//   location: '',
+//   event_link: '',
+//   max_attendees: 15,
+//   registration_deadline: new Date(),
+// };
 
 export default function EventPage() {
-  const [data, setData] = useState(INITIAL_DATA);
+  // const [data, setData] = useState(INITIAL_DATA);
+  const { event, setEvent } = useBoundStore((state) => state);
+
   const { toast } = useToast();
 
-  function updateFields(fields: Partial<EventData>) {
-    setData((prev) => {
-      return {
-        ...prev,
-        ...fields,
-      };
-    });
-  }
+  // function updateFields(fields: Partial<EventData>) {
+  //   setData((prev) => {
+  //     return {
+  //       ...prev,
+  //       ...fields,
+  //     };
+  //   });
+  // }
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!isLastStep) return next();
-    console.log({ data });
-    createEventMutation(data);
+    console.log({ event });
+    createEventMutation(event);
   }
 
   const { mutate: createEventMutation } = useMutation({
-    mutationFn: (data: EventData) => createEvent(data),
+    mutationFn: (event: Event) => createEvent(event),
     onSuccess: (data) => {
       console.log({ data });
       toast({
@@ -86,10 +90,10 @@ export default function EventPage() {
   });
 
   const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultiStepForm([
-    <EventSpeakers {...data} updateFields={updateFields} />,
-    <EventTitle {...data} updateFields={updateFields} />,
-    <EventDetails {...data} updateFields={updateFields} />,
-    <EventTags {...data} updateFields={updateFields} />,
+    <EventSpeakers />,
+    <EventTitle />,
+    <EventDetails />,
+    <EventTags />,
   ]);
   return (
     <div className="relative mx-auto w-[calc(100%-20%)] md:w-[calc(100%-30%)] ">

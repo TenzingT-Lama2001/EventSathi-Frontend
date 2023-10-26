@@ -5,17 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '../ui/textarea';
 import { EventSpeakersList } from './EventSpeakersList';
-type EventSpeakersData = {
-  speakers: {
-    name: string;
-    bio: string;
-    photo: string;
-  }[];
-};
+import { useBoundStore } from '@/zustand/store';
 
-type EventSpeakersProps = EventSpeakersData & { updateFields: (fields: Partial<EventSpeakersData>) => void };
-
-export function EventSpeakers({ speakers, updateFields }: EventSpeakersProps) {
+export function EventSpeakers() {
+  const { event, setEvent } = useBoundStore((state) => state);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [photo, setPhoto] = useState('');
@@ -24,11 +17,9 @@ export function EventSpeakers({ speakers, updateFields }: EventSpeakersProps) {
     const newSpeaker = {
       name,
       bio,
-      photo: photo || 'default photo', // Set to 'default photo' if photo is empty
+      photo: photo || 'default photo',
     };
-    updateFields({ speakers: [...speakers, newSpeaker] });
-    console.log('Speakers', { speakers });
-    // Reset the input fields
+    setEvent({ speakers: [...event.speakers, newSpeaker] });
     setName('');
     setBio('');
     setPhoto('');
@@ -60,7 +51,6 @@ export function EventSpeakers({ speakers, updateFields }: EventSpeakersProps) {
               </Label>
               <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="col-span-3" />
             </div>
-            {/* Add input fields for photo or any other details you need */}
           </div>
           <DialogFooter>
             <Button type="button" onClick={handleSaveSpeaker}>
@@ -70,7 +60,7 @@ export function EventSpeakers({ speakers, updateFields }: EventSpeakersProps) {
         </DialogContent>
       </Dialog>
 
-      <EventSpeakersList speakers={speakers} />
+      <EventSpeakersList />
     </div>
   );
 }

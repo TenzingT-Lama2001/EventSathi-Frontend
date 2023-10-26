@@ -1,6 +1,5 @@
 'use client';
 import { getCurrentUser } from '@/api/auth';
-import { LoginDto } from '@/components/auth/LoginForm';
 import { clearCookies, getAccessTokenFromCookie, isValidToken, setSession } from '@/lib/jwt';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, createContext, useEffect, useReducer } from 'react';

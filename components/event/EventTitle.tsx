@@ -1,23 +1,10 @@
-import { cn } from '@/lib/utils';
-import { LoginDto } from '../auth/LoginForm';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema } from '@/lib/validations/auth';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { buttonVariants } from '../ui/button';
-import { Icons } from '../icons';
 import { Textarea } from '@/components/ui/textarea';
+import { useBoundStore } from '@/zustand/store';
 
-type EventTitleData = {
-  title: string;
-  description: string;
-};
-
-type EventTitleProps = EventTitleData & {
-  updateFields: (fields: Partial<EventTitleData>) => void;
-};
-export function EventTitle({ title, description, updateFields }: EventTitleProps) {
+export function EventTitle() {
+  const { event, setEvent } = useBoundStore((state) => state);
   return (
     <div className="mt-2 flex w-full flex-col">
       <h2 className="mb-2 text-center text-xl">Tell us about your event</h2>
@@ -30,18 +17,17 @@ export function EventTitle({ title, description, updateFields }: EventTitleProps
           id="title"
           placeholder="Title"
           type="text"
-          value={title}
+          value={event.title}
           autoCapitalize="none"
           autoComplete="title"
           autoCorrect="off"
           onChange={(e) =>
-            updateFields({
+            setEvent({
               title: e.target.value,
             })
           }
         />
       </div>
-
       <div className="mt-4">
         <Label className="sr-only" htmlFor="description">
           Description
@@ -53,9 +39,9 @@ export function EventTitle({ title, description, updateFields }: EventTitleProps
           autoComplete="description"
           autoCorrect="off"
           className="min-h-[240px]  p-4 md:min-h-[200px]"
-          value={description}
+          value={event.description}
           onChange={(e) =>
-            updateFields({
+            setEvent({
               description: e.target.value,
             })
           }

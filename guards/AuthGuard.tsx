@@ -3,8 +3,8 @@ import { getCurrentUser } from '@/api/auth';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { getAccessTokenFromCookie, isValidToken } from '@/lib/jwt';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter, usePathname } from 'next/navigation';
-import React, { Suspense } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface AuthGuardProps {
   children?: React.ReactNode;
@@ -27,7 +27,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     refetchOnWindowFocus: false,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAccessTokenValid) {
       router.push('/login');
     }

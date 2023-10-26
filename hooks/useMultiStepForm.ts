@@ -1,5 +1,4 @@
 import { ReactElement, useState } from 'react';
-
 type UseMultiStepFormResult = {
   currentStepIndex: number;
   step: ReactElement;

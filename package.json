@@ -37,7 +37,8 @@
     "react-stately": "^3.27.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.4.4"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.36.0",

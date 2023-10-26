@@ -6,23 +6,25 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { EventDetailsData } from './event/EventDetails';
+import { useBoundStore } from '@/zustand/store';
 
 type DatePickerProps = {
   placeholder?: string;
-  updateFields: (fields: Partial<EventDetailsData>) => void;
   type: 'start_date' | 'end_date' | 'registration_deadline';
   initialDate?: Date;
 };
 
-export function DatePicker({ placeholder = 'Pick a date', updateFields, type, initialDate }: DatePickerProps) {
+export function DatePicker({ placeholder = 'Pick a date', type, initialDate }: DatePickerProps) {
+  const { setEvent } = useBoundStore((state) => state);
   const [date, setDate] = React.useState<Date | undefined>(initialDate);
+
   React.useEffect(() => {
     if (date) {
       console.log(date);
-      updateFields({ [type]: date });
+      setEvent({ [type]: date });
     }
   }, [date]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>

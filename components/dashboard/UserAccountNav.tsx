@@ -1,4 +1,5 @@
 'use client';
+
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -8,10 +9,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserAvatar } from '@/components/UserAvatar';
-import { clearCookies } from '@/lib/jwt';
 import { useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
-import useAuth from '@/hooks/useAuth';
 import { AuthUser } from '@/context/AuthContext';
 import { logout } from '@/api/auth';
 
